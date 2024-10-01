@@ -15,7 +15,30 @@ ft_priority_queue<T, Compare>::Node::Node(const_reference _key) :
 {}
 
 template <typename T, typename Compare>
+ft_priority_queue<T, Compare>::Node::Node(const Node& other) :
+	children{other.children},
+	key{other.key},
+	degree{other.degree}
+{}
+
+template <typename T, typename Compare>
+ft_priority_queue<T, Compare>::Node::Node(Node&& other) :
+	children{std::move(other.children)},
+	key{std::move(other.key)},
+	degree{other.degree}
+{
+	other.degree = 0;
+}
+
+template <typename T, typename Compare>
 ft_priority_queue<T, Compare>::~ft_priority_queue() noexcept {}
+
+template <typename T, typename Compare>
+ft_priority_queue<T, Compare>::ft_priority_queue () :
+	root_list{},
+	prior{nullptr},
+	n{0}
+{}
 
 template <typename T, typename Compare>
 ft_priority_queue<T, Compare>::ft_priority_queue(const Compare& compare) :
@@ -26,10 +49,40 @@ ft_priority_queue<T, Compare>::ft_priority_queue(const Compare& compare) :
 {}
 
 template <typename T, typename Compare>
+ft_priority_queue<T, Compare>::ft_priority_queue(const ft_priority_queue& other) :
+	root_list{other.root_list},
+	prior{nullptr},
+	n{other.n},
+	cmp{other.cmp}
+{
+	_set_min();
+}
+
+template <typename T, typename Compare>
+ft_priority_queue<T, Compare>::ft_priority_queue(ft_priority_queue&& other) :
+	root_list{std::move(other.root_list)},
+	prior{other.prior},
+	n{other.n},
+	cmp{std::move(other.cmp)}
+{
+	other.n = 0;
+	other.prior = nullptr;
+}
+
+
+template <typename T, typename Compare>
+template <class InputIt>
+ft_priority_queue<T, Compare>::ft_priority_queue(InputIt first, InputIt last, const Compare& compare) : cmp{compare} {
+	while (first != last) {
+		push(*first++);
+	}
+}
+
+template <typename T, typename Compare>
 void ft_priority_queue<T, Compare>::push (const_reference key) {
 	root_list.emplace_back(key);
 	++n;
-	_set_prior(root_list.back());
+	_set_prior(&root_list.back());
 }
 
 template <typename T, typename Compare>
@@ -60,6 +113,23 @@ void ft_priority_queue<T, Compare>::pop() {
 }
 
 template <typename T, typename Compare>
+typename ft_priority_queue<T, Compare>::const_reference ft_priority_queue<T, Compare>::top () const {
+	return prior->key;
+}
+
+template <typename T, typename Compare>
+bool ft_priority_queue<T, Compare>::empty () const {
+	return root_list.empty();
+}
+
+template <typename T, typename Compare>
+typename ft_priority_queue<T, Compare>::size_type ft_priority_queue<T, Compare>::size () const {
+	return n;
+}
+
+// ---------------------------- helpers ------------------------------------------------
+
+template <typename T, typename Compare>
 void ft_priority_queue<T, Compare>::_heapify () {
 	if (root_list.empty())
 		return;
@@ -68,7 +138,7 @@ void ft_priority_queue<T, Compare>::_heapify () {
 	while (it != root_list.end())
 		_connect(degrees, it++);
 
-	_print_root_list();
+	// _print_root_list();
 }
 
 template <typename T, typename Compare>

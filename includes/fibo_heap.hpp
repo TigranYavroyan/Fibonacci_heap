@@ -25,6 +25,8 @@ private:
 
 		Node(const_reference _key);
 		Node();
+		Node(const Node& other);
+		Node(Node&& other);
 	};
 
 	std::list<Node> root_list;
@@ -35,7 +37,7 @@ private:
 	using iterator = std::list<Node>::iterator;
 	using const_iterator = std::list<Node>::const_iterator;
 public:
-	ft_priority_queue() : ft_priority_queue(Compare()) {}
+	ft_priority_queue();
 
     explicit ft_priority_queue(const Compare& compare);
 
@@ -46,23 +48,23 @@ public:
     template<class InputIt>
     ft_priority_queue(InputIt first, InputIt last, const Compare& compare = Compare());
 
-    template<class Alloc>
-    explicit ft_priority_queue(const Alloc& alloc);
+    // template<class Alloc>
+    // explicit ft_priority_queue(const Alloc& alloc);
 
-    template<class Alloc>
-    ft_priority_queue(const Compare& compare, const Alloc& alloc);
+    // template<class Alloc>
+    // ft_priority_queue(const Compare& compare, const Alloc& alloc);
 
-    template<class Alloc>
-    ft_priority_queue(const ft_priority_queue& other, const Alloc& alloc);
+    // template<class Alloc>
+    // ft_priority_queue(const ft_priority_queue& other, const Alloc& alloc);
 
-    template<class Alloc>
-    ft_priority_queue(ft_priority_queue&& other, const Alloc& alloc);
+    // template<class Alloc>
+    // ft_priority_queue(ft_priority_queue&& other, const Alloc& alloc);
 
-    template<class InputIt, class Alloc>
-    ft_priority_queue(InputIt first, InputIt last, const Alloc& alloc);
+    // template<class InputIt, class Alloc>
+    // ft_priority_queue(InputIt first, InputIt last, const Alloc& alloc);
 
-    template<class InputIt, class Alloc>
-    ft_priority_queue(InputIt first, InputIt last, const Compare& compare, const Alloc& alloc);
+    // template<class InputIt, class Alloc>
+    // ft_priority_queue(InputIt first, InputIt last, const Compare& compare, const Alloc& alloc);
 
 	~ft_priority_queue() noexcept;
 

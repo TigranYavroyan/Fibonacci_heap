@@ -3,7 +3,7 @@ CC = g++
 INCLPATH = ./includes/
 SRCSPATH = ./srcs/
 # $(HELPERSPATH)
-CFLAGS = -g -std=c++2a -fsanitize=address $(foreach H, $(INCLPATH), -I$(H))
+CFLAGS = -g -std=c++2a $(foreach H, $(INCLPATH), -I$(H))
 MAIN = $(SRCSPATH)main.cpp
 EXEC = ./a.out
 #HELPERS = $(HELPERSPATH)*.cpp
@@ -28,4 +28,7 @@ crun: $(EXEC)
 	clear
 	./$^
 
-.PHONY: all clean fclean re run crun
+leaks:
+	valgrind --leak-check=full --show-leak-kinds=all ./$(EXEC)
+
+.PHONY: all clean fclean re run crun leaks
