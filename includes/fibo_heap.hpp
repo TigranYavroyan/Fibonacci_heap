@@ -27,6 +27,8 @@ private:
 		Node();
 		Node(const Node& other);
 		Node(Node&& other);
+		Node& operator=(const Node& other);
+		Node& operator=(Node&& other);
 	};
 
 	std::list<Node> root_list;
@@ -77,8 +79,9 @@ public:
 	void push(const_reference key);
 	void push(r_reference key);
 	void pop();
+	void clear() noexcept;
 	void swap(ft_priority_queue& other) noexcept;
-	// void merge(ft_priority_queue& other);
+	void merge(ft_priority_queue& other);
 
 	template <typename... Args>
 	void emplace(Args&&... args);

@@ -31,6 +31,24 @@ ft_priority_queue<T, Compare>::Node::Node(Node&& other) :
 }
 
 template <typename T, typename Compare>
+typename ft_priority_queue<T, Compare>::Node& ft_priority_queue<T, Compare>::Node::operator= (const Node& other) {
+	children = other.children;
+	key = other.key;
+	degree = other.degree;
+	return *this;
+}
+
+template <typename T, typename Compare>
+typename ft_priority_queue<T, Compare>::Node& ft_priority_queue<T, Compare>::Node::operator= (Node&& other) {
+	if (this == &other)
+		return *this;
+	children = std::move(other.children);
+	key = std::move(other.key);
+	degree = other.degree;
+	other.degree = 0;
+}
+
+template <typename T, typename Compare>
 ft_priority_queue<T, Compare>::~ft_priority_queue() noexcept {}
 
 template <typename T, typename Compare>
@@ -72,7 +90,11 @@ ft_priority_queue<T, Compare>::ft_priority_queue(ft_priority_queue&& other) :
 
 template <typename T, typename Compare>
 template <class InputIt>
-ft_priority_queue<T, Compare>::ft_priority_queue(InputIt first, InputIt last, const Compare& compare) : cmp{compare} {
+ft_priority_queue<T, Compare>::ft_priority_queue(InputIt first, InputIt last, const Compare& compare) : 
+	cmp{compare},
+	n{0},
+	prior{nullptr}
+{
 	while (first != last) {
 		push(*first++);
 	}
@@ -81,6 +103,14 @@ ft_priority_queue<T, Compare>::ft_priority_queue(InputIt first, InputIt last, co
 template <typename T, typename Compare>
 void ft_priority_queue<T, Compare>::push (const_reference key) {
 	root_list.emplace_back(key);
+	++n;
+	_set_prior(&root_list.back());
+}
+
+template <typename T, typename Compare>
+template <typename... Args>
+void ft_priority_queue<T, Compare>::emplace (Args&&... args) {
+	root_list.emplace_back(args...);
 	++n;
 	_set_prior(&root_list.back());
 }
@@ -113,6 +143,26 @@ void ft_priority_queue<T, Compare>::pop() {
 }
 
 template <typename T, typename Compare>
+ft_priority_queue<T, Compare>& ft_priority_queue<T, Compare>::operator= (const ft_priority_queue<T, Compare>& other) {
+	root_list = other.root_list;
+	n = other.n;
+	_set_min();
+	return *this;
+}
+
+template <typename T, typename Compare>
+ft_priority_queue<T, Compare>& ft_priority_queue<T, Compare>::operator= (ft_priority_queue<T, Compare>&& other) {
+	if (this == &other)
+		return *this;
+	n = other.n;
+	root_list = std::move(other.root_list);
+	other.n = 0;
+	other.prior = nullptr;
+	_set_min();
+	return *this;
+}
+
+template <typename T, typename Compare>
 typename ft_priority_queue<T, Compare>::const_reference ft_priority_queue<T, Compare>::top () const {
 	return prior->key;
 }
@@ -127,6 +177,25 @@ typename ft_priority_queue<T, Compare>::size_type ft_priority_queue<T, Compare>:
 	return n;
 }
 
+template <typename T, typename Compare>
+void ft_priority_queue<T, Compare>::clear() noexcept {
+	root_list.clear();
+	n = 0;
+	prior = nullptr;
+}
+
+template <typename T, typename Compare>
+void ft_priority_queue<T, Compare>::swap(ft_priority_queue<T, Compare>& other) noexcept {
+	std::swap(*this, other);
+}
+
+template <typename T, typename Compare>
+void ft_priority_queue<T, Compare>::merge(ft_priority_queue<T, Compare>& other) {
+	n += other.n;
+	_set_prior(other.prior);
+	root_list.splice(root_list.end(), std::move(other.root_list));
+}
+
 // ---------------------------- helpers ------------------------------------------------
 
 template <typename T, typename Compare>
@@ -137,8 +206,6 @@ void ft_priority_queue<T, Compare>::_heapify () {
 	iterator it = root_list.begin();
 	while (it != root_list.end())
 		_connect(degrees, it++);
-
-	// _print_root_list();
 }
 
 template <typename T, typename Compare>
