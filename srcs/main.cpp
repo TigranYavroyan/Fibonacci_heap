@@ -7,4 +7,6 @@ int main () {
 	ob.push(6);
 	ob.push(7);
 	ob.pop();
+	ob.pop();
+	ob.pop();
 }

@@ -19,10 +19,7 @@ public:
 	using size_type = std::size_t;
 private:
 	struct Node {
-		std::shared_ptr<Node> parent;
-		std::shared_ptr<Node> prev;
-		std::shared_ptr<Node> next;
-		std::shared_ptr<Node> child;
+		std::list<Node> children;
 		value_type key;
 		int degree; // number of children
 
@@ -30,10 +27,13 @@ private:
 		Node();
 	};
 
-	std::list<std::shared_ptr<Node>> root_list;
+	std::list<Node> root_list;
 	Compare cmp;
-	std::shared_ptr<Node> prior;
+	Node* prior;
 	size_type n; // total nodes count
+
+	using iterator = std::list<Node>::iterator;
+	using const_iterator = std::list<Node>::const_iterator;
 public:
 	ft_priority_queue() : ft_priority_queue(Compare()) {}
 
@@ -81,12 +81,12 @@ public:
 	template <typename... Args>
 	void emplace(Args&&... args);
 private:
-	std::shared_ptr<Node> _push_back(std::shared_ptr<Node>& tmp, std::shared_ptr<Node>& it);
-	void _set_prior (std::shared_ptr<Node>& curr);
+	iterator _push_back(iterator tmp, iterator it);
+	void _set_prior (Node* curr);
 	void _heapify ();
 	void _set_min ();
-	void _add_child(std::shared_ptr<Node>& parent, std::shared_ptr<Node>& child);
-	void _connect(std::vector<std::shared_ptr<Node>>& degrees, std::shared_ptr<Node>& it);
+	void _connect(std::vector<iterator>& degrees, iterator it);
+	void _print_root_list () const;
 };
 
 #include "../srcs/fibo_heap.cpp"
